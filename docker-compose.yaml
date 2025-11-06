@@ -1,26 +1,50 @@
-version: "3.9"
 services:
-  backend:
-    build: ./backend
-    ports:
-      - "3000:3000"
-    env_file:
-      - ./backend/.env
-    depends_on:
-      - db
-
-  frontend:
-    build: ./frontend
-    ports:
-      - "4000:3000"
-    env_file:
-      - ./frontend/.env
-    depends_on:
-      - backend
-
   db:
-    image: postgres:16
+    image: postgres:15
+    container_name: pluga_db
+    restart: always
     env_file:
-      - ./backend/.env
+      - ./server/.env
     ports:
       - "5432:5432"
+    volumes:
+      - pluga_db_data:/var/lib/postgresql/data
+    networks:
+      - pluga_network
+
+  backend:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: pluga_backend
+    env_file:
+      - ./server/.env
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    networks:
+      - pluga_network
+    command: bash -c "bundle exec rails db:create db:migrate && bundle exec rails s -b 0.0.0.0 -p 3000"
+
+  frontend:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: pluga_frontend
+    env_file:
+      - ./client/.env
+    ports:
+      - "4000:4000"
+    depends_on:
+      - backend
+    networks:
+      - pluga_network
+    command: npm run dev -- -p 4000
+
+networks:
+  pluga_network:
+    driver: bridge
+
+volumes:
+  pluga_db_data:
