@@ -1,8 +1,10 @@
+version: "3.9"
+
 services:
   db:
-    image: postgres:15
+    image: postgres:15-alpine
     container_name: pluga_db
-    restart: always
+    restart: unless-stopped
     env_file:
       - ./server/.env
     ports:
@@ -11,21 +13,44 @@ services:
       - pluga_db_data:/var/lib/postgresql/data
     networks:
       - pluga_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 5s
 
   backend:
     build:
       context: ./server
       dockerfile: Dockerfile
+      target: ${RAILS_TARGET:-development}
     container_name: pluga_backend
     env_file:
       - ./server/.env
     ports:
       - "3000:3000"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     networks:
       - pluga_network
-    command: bash -c "bundle exec rails db:create db:migrate && bundle exec rails s -b 0.0.0.0 -p 3000"
+    volumes:
+      - type: bind
+        source: ./server
+        target: /app
+        consistency: delegated
+
+      # Cache de gems e storage local
+      - pluga_bundle:/usr/local/bundle
+      - pluga_storage:/app/storage
+
+    command: >
+      sh -c "
+        bundle check || bundle install &&
+        bin/rails db:prepare &&
+        bin/rails s -b 0.0.0.0 -p 3000
+      "
 
   frontend:
     build:
@@ -40,7 +65,17 @@ services:
       - backend
     networks:
       - pluga_network
-    command: npm run dev -- -p 4000
+    volumes:
+      - type: bind
+        source: ./client
+        target: /app
+        consistency: delegated
+      - pluga_node_modules:/app/node_modules
+    command: >
+      sh -c "
+        npm install &&
+        npm run dev -- --host 0.0.0.0 -p 4000
+      "
 
 networks:
   pluga_network:
@@ -48,3 +83,6 @@ networks:
 
 volumes:
   pluga_db_data:
+  pluga_storage:
+  pluga_bundle:
+  pluga_node_modules:
