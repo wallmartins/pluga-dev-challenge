@@ -18,6 +18,7 @@ module Backend
 
     # Enable autoloading for app/exceptions directory
     config.eager_load_paths << Rails.root.join("app/exceptions")
+    config.autoload_paths << Rails.root.join("app/lib")
 
     # Configuration for the application, engines, and railties goes here.
     #
