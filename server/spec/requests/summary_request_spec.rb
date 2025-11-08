@@ -25,11 +25,12 @@ RSpec.describe SummariesController do
 
     it "renders json with array of serialized summaries" do
       controller = described_class.new
+      initial_count = Summary.count
       create_list(:summary, 2, original_post: "a" * 50)
 
       expect(controller).to receive(:render) do |args|
         expect(args[:json]).to be_a(Array)
-        expect(args[:json].length).to eq(2)
+        expect(args[:json].length).to eq(initial_count + 2)
       end
 
       controller.send(:index)

@@ -4,7 +4,7 @@ class SummarizeTextService
   end
 
   def call
-    GeminiClient.summarize(@text)
+    Gemini::Client.summarize(@text)
   rescue Exceptions::ApiError => e
     raise e
   rescue => e
