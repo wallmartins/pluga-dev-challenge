@@ -1,28 +1,33 @@
 import axios from "axios";
 import type { CreateSnippetPayload, SnippetResponse, SnippetsListResponse } from "./types";
 
-const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3000";
+export const createApiClient = () => {
+  const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3000";
+  return axios.create({
+    baseURL: apiBaseUrl,
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+};
 
-const api = axios.create({
-  baseURL: apiBaseUrl,
-  headers: {
-    "Content-Type": "application/json",
-  },
-});
+const api = createApiClient();
 
-export const summariesApi = {
+export const createSummariesApi = (apiClient = api) => ({
   create: async (payload: CreateSnippetPayload): Promise<SnippetResponse> => {
-    const { data } = await api.post<SnippetResponse>("/summaries", payload);
+    const { data } = await apiClient.post<SnippetResponse>("/summaries", payload);
     return data;
   },
 
   getById: async (id: string): Promise<SnippetResponse> => {
-    const { data } = await api.get<SnippetResponse>(`/summaries/${id}`);
+    const { data } = await apiClient.get<SnippetResponse>(`/summaries/${id}`);
     return data;
   },
 
   list: async (): Promise<SnippetsListResponse> => {
-    const { data } = await api.get<SnippetsListResponse>("/summaries");
+    const { data } = await apiClient.get<SnippetsListResponse>("/summaries");
     return data;
   },
-};
+});
+
+export const summariesApi = createSummariesApi();
