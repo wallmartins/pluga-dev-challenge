@@ -50,6 +50,7 @@ export function useHomeSummaries() {
 
   const handleSelectSnippet = (id: string) => {
     setSelectedSnippetId(id);
+    setShowEditor(false);
     setErrorMessage(null);
   };
 
