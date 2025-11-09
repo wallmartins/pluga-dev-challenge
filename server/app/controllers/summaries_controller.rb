@@ -2,12 +2,12 @@
 class SummariesController < ApplicationController
   def index
     summaries = Summary.order(created_at: :desc)
-    render json: summaries.map { |s| SummarySerializer.new(s).as_json }
+    render json: summaries
   end
 
   def show
     summary = Summary.find(params[:id])
-    render json: SummarySerializer.new(summary, detailed: true).as_json
+    render json: summary
   end
 
   def create
@@ -15,7 +15,7 @@ class SummariesController < ApplicationController
 
     if summary.save
       SummarizeSummaryJob.perform_later(summary.id)
-      render json: SummarySerializer.new(summary).as_json, status: :created
+      render json: summary, status: :created
     else
       raise Exceptions::ValidationError.new(
         entity: "Summary",
