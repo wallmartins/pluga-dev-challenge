@@ -8,6 +8,7 @@ Bundler.require(*Rails.groups)
 module Backend
   class Application < Rails::Application
     config.load_defaults 8.1
+
     config.api_only = true
 
     config.autoloader = :zeitwerk
