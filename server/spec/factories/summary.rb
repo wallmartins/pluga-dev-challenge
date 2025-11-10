@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :summary do
     original_post { Faker::Lorem.paragraphs(number: 3).join("\n\n") }

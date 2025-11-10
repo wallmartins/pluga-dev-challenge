@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'rails_helper'
 
 RSpec.describe SummariesController do
@@ -15,7 +16,7 @@ RSpec.describe SummariesController do
     it "serializes each summary with SummarySerializer" do
       controller = described_class.new
       summary = create(:summary, original_post: "a" * 50)
-      allow(Summary).to receive(:order).with(created_at: :desc).and_return([summary])
+      allow(Summary).to receive(:order).with(created_at: :desc).and_return([ summary ])
 
       expect(SummarySerializer).to receive(:new).with(summary).and_call_original
       allow(controller).to receive(:render)
@@ -177,7 +178,7 @@ RSpec.describe SummariesController do
 
       params = controller.send(:summary_params)
 
-      expect(params.to_h.keys).to eq(["original_post"])
+      expect(params.to_h.keys).to eq([ "original_post" ])
     end
 
     it "returns ActionController::Parameters" do

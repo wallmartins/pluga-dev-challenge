@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # app/exceptions/api_error.rb
 module Exceptions
   class ApiError < StandardError

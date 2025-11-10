@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require "rails_helper"
 require "webmock/rspec"
 
@@ -35,10 +36,10 @@ RSpec.describe Gemini::HttpClient do
 
     it "converts body to JSON" do
       stub = stub_request(:post, %r{generativelanguage\.googleapis\.com})
-               .with(body: { contents: [{ parts: [{ text: "test" }] }] }.to_json)
+               .with(body: { contents: [ { parts: [ { text: "test" } ] } ] }.to_json)
                .to_return(status: 200, body: "{}")
 
-      client.post({ contents: [{ parts: [{ text: "test" }] }] })
+      client.post({ contents: [ { parts: [ { text: "test" } ] } ] })
 
       expect(stub).to have_been_requested
     end

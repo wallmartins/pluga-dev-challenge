@@ -2,7 +2,6 @@
 
 module Gemini
   class RequestBuilder
-
     def initialize(text)
       @text = InputSanitizer.clean(text)
     end

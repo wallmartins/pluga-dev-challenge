@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require "rails_helper"
 require "webmock/rspec"
 
@@ -16,7 +17,7 @@ RSpec.describe Gemini::Client, type: :request do
     context "when all dependencies work correctly" do
       it "returns the summary successfully" do
         stub_request(:post, %r{generativelanguage\.googleapis\.com})
-          .to_return(status: 200, body: { candidates: [{ content: { parts: [{ text: "AI summary" }] } }] }.to_json)
+          .to_return(status: 200, body: { candidates: [ { content: { parts: [ { text: "AI summary" } ] } } ] }.to_json)
 
         result = described_class.summarize(text)
         expect(result).to eq("AI summary")
@@ -54,7 +55,7 @@ RSpec.describe Gemini::Client, type: :request do
             status: 200,
             body: {
               candidates: [
-                { content: { parts: [{ text: expected_summary }] } }
+                { content: { parts: [ { text: expected_summary } ] } }
               ]
             }.to_json,
             headers: { "Content-Type" => "application/json" }

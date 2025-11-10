@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # app/controllers/application_controller.rb
 class ApplicationController < ActionController::API
   rescue_from Exceptions::ApiError, with: :handle_api_error
