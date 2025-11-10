@@ -77,9 +77,13 @@ jobs:
           --health-retries 5
 
     env:
-      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/pluga_challenge_test
       RAILS_ENV: test
       GEMINI_KEY: test_key_for_ci
+      DB_HOST: localhost
+      DB_PORT: 5432
+      DB_NAME: pluga_challenge_test
+      DB_USER: postgres
+      DB_PASSWORD: postgres
 
     steps:
       - name: Checkout code
@@ -94,6 +98,7 @@ jobs:
 
       - name: Set up database
         run: |
+          bundle exec rails db:drop --if-exists
           bundle exec rails db:create
           bundle exec rails db:migrate
         working-directory: server
