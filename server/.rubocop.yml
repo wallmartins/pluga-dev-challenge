@@ -21,7 +21,6 @@ Style/FrozenStringLiteralComment:
     - "config/initializers/rswag_ui.rb"
     - "spec/spec_helper.rb"
     - "spec/rails_helper.rb"
-    - "config/application.rb"
 
 Metrics/MethodLength:
   Max: 15
