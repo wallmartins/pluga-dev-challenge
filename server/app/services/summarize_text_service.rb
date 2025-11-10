@@ -10,7 +10,7 @@ class SummarizeTextService
   rescue => e
     raise Exceptions::ExternalServiceError.new(
       service_name: "Gemini API",
-      message: "Unexpected error during summarization.",
+      message: "Erro inesperado durante a sumarização.",
       details: e.message
     )
   end

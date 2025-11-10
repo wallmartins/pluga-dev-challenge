@@ -25,9 +25,9 @@ module Exceptions
   end
 
   class NotFoundError < ApiError
-    def initialize(resource: "Resource", details: nil)
+    def initialize(resource: "Recurso", details: nil)
       super(
-        "#{resource} could not be found.",
+        "#{resource} não encontrado.",
         status: 404,
         details:
       )
@@ -35,9 +35,9 @@ module Exceptions
   end
 
   class ValidationError < ApiError
-    def initialize(entity: "Record", message: nil, details: nil)
+    def initialize(entity: "Registro", message: nil, details: nil)
       super(
-        message || "#{entity} validation failed. Please check the provided data.",
+        message || "Validação do #{entity} falhou. Por favor, verifique os dados fornecidos.",
         status: 422,
         details:
       )
@@ -45,21 +45,21 @@ module Exceptions
   end
 
   class BadRequestError < ApiError
-    def initialize(message = "The request is invalid or missing required parameters.", details: nil)
+    def initialize(message = "A requisição é inválida ou está faltando parâmetros obrigatórios.", details: nil)
       super(message, status: 400, details:)
     end
   end
 
   class InternalServerError < ApiError
-    def initialize(message = "An unexpected error occurred while processing your request.", details: nil)
+    def initialize(message = "Ocorreu um erro inesperado ao processar sua requisição.", details: nil)
       super(message, status: 500, details:)
     end
   end
 
   class ExternalServiceError < ApiError
-    def initialize(service_name: "External service", message: nil, details: nil)
+    def initialize(service_name: "Serviço externo", message: nil, details: nil)
       super(
-        message || "#{service_name} is temporarily unavailable. Please try again later.",
+        message || "#{service_name} está temporariamente indisponível. Tente novamente mais tarde.",
         status: 502,
         error_code: "external_service_error",
         details:

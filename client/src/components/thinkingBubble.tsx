@@ -28,6 +28,7 @@ export function ThinkingBubble({ onComplete }: ThinkingBubbleProps) {
       displayText: "",
     }))
   );
+  const [hasCompleted, setHasCompleted] = useState(false);
 
   useEffect(() => {
     let currentStepIndex = 0;
@@ -36,9 +37,7 @@ export function ThinkingBubble({ onComplete }: ThinkingBubbleProps) {
 
     const typeStep = () => {
       if (currentStepIndex >= steps.length) {
-        if (onComplete) {
-          setTimeout(onComplete, 300);
-        }
+        setHasCompleted(true);
         return;
       }
 
@@ -77,28 +76,33 @@ export function ThinkingBubble({ onComplete }: ThinkingBubbleProps) {
     typingInterval = setTimeout(typeStep, 300);
 
     return () => clearTimeout(typingInterval);
-  }, [onComplete]);
+  }, []);
+
+  useEffect(() => {
+    if (hasCompleted && onComplete) {
+      const timer = setTimeout(onComplete, 300);
+      return () => clearTimeout(timer);
+    }
+  }, [hasCompleted, onComplete]);
 
   return (
     <div className="flex flex-col gap-2 py-4">
       {steps.map((step, index) => (
         <div
           key={index}
-          className={`flex items-center gap-2 transition-opacity duration-300 ${
+          className={`flex items-center gap-2 min-h-6 transition-opacity duration-300 ${
             step.status === "pending" ? "opacity-30" : "opacity-100"
           }`}
         >
-          <div className="flex items-center gap-2 min-h-6">
-            {step.status === "completed" && (
-              <span className="text-green-600 dark:text-green-400">✓</span>
+          {step.status === "completed" && (
+            <span className="text-green-600 dark:text-green-400 shrink-0">✓</span>
+          )}
+          <span className="text-sm font-medium text-zinc-600 dark:text-zinc-400">
+            {step.displayText}
+            {step.status === "typing" && (
+              <span className="inline-block w-0.5 h-4 ml-1 bg-zinc-600 dark:bg-zinc-400 animate-pulse" />
             )}
-            <span className="text-sm font-medium text-zinc-600 dark:text-zinc-400">
-              {step.displayText}
-              {step.status === "typing" && (
-                <span className="inline-block w-0.5 h-4 ml-1 bg-zinc-600 dark:bg-zinc-400 animate-pulse" />
-              )}
-            </span>
-          </div>
+          </span>
         </div>
       ))}
     </div>

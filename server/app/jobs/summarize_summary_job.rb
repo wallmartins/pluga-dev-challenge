@@ -11,15 +11,52 @@ class SummarizeSummaryJob < ApplicationJob
       status: "completed"
     )
 
+  rescue Exceptions::ValidationError => e
+    if summary
+      summary.update!(
+        status: "failed",
+        summary: e.message
+      )
+    end
+    Rails.logger.error("Validation error while summarizing ID=#{summary_id}: #{e.message}")
+    raise e
+  rescue Exceptions::BadRequestError => e
+    if summary
+      summary.update!(
+        status: "failed",
+        summary: "O texto contém padrões suspeitos ou é inválido. Por favor, revise e tente novamente."
+      )
+    end
+    Rails.logger.error("Bad request while summarizing ID=#{summary_id}: #{e.message}")
+    raise e
+  rescue Exceptions::ExternalServiceError => e
+    if summary
+      summary.update!(
+        status: "failed",
+        summary: "O serviço de resumo está temporariamente indisponível. Por favor, tente novamente em alguns instantes."
+      )
+    end
+    Rails.logger.error("External service error while summarizing ID=#{summary_id}: #{e.message}")
+    raise e
   rescue Exceptions::ApiError => e
-    summary.update!(status: "failed") if summary
-    Rails.logger.error("Gemini API error while summarizing ID=#{summary_id}: #{e.message}")
+    if summary
+      summary.update!(
+        status: "failed",
+        summary: e.message
+      )
+    end
+    Rails.logger.error("API error while summarizing ID=#{summary_id}: #{e.message}")
     raise e
   rescue => e
-    summary.update!(status: "failed") if summary
+    if summary
+      summary.update!(
+        status: "failed",
+        summary: "Ocorreu um erro inesperado ao processar o resumo. Por favor, tente novamente."
+      )
+    end
     Rails.logger.error("Unexpected error in SummarizeSummaryJob ID=#{summary_id}: #{e.message}")
     raise Exceptions::InternalServerError.new(
-      "Failed to process summary #{summary_id}",
+      "Falha ao processar resumo #{summary_id}",
       details: e.message
     )
   end
