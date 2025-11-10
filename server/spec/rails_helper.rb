@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 require 'spec_helper'
 ENV['RAILS_ENV'] ||= 'test'
@@ -8,6 +7,7 @@ require 'simplecov'
 SimpleCov.start 'rails' do
   enable_coverage :branch
   add_filter '/spec/'
+  track_files 'app/**/*.rb'
 end
 puts "SimpleCov started for coverage analysis"
 
@@ -19,10 +19,6 @@ abort("The Rails environment is running in production mode!") if Rails.env.produ
 # return unless Rails.env.test?
 require 'rspec/rails'
 require 'shoulda/matchers'
-
-# Load exception classes after SimpleCov is started
-require_relative '../app/exceptions'
-require_relative '../app/exceptions/api_error'
 # Add additional requires below this line. Rails is not loaded until this point!
 
 # Requires supporting ruby files with custom matchers and macros, etc, in

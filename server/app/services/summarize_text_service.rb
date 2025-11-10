@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 class SummarizeTextService
   def initialize(text)
     @text = text
@@ -6,10 +7,10 @@ class SummarizeTextService
 
   def call
     Gemini::Client.summarize(@text)
-  rescue Exceptions::ApiError => e
+  rescue ApiError => e
     raise e
   rescue => e
-    raise Exceptions::ExternalServiceError.new(
+    raise ExternalServiceError.new(
       service_name: "Gemini API",
       message: "Erro inesperado durante a sumarização.",
       details: e.message

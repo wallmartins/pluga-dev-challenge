@@ -13,13 +13,13 @@ import { useState } from "react";
 export function Home() {
   const {
     summaries,
-    selectedSnippetId,
+    selectedSummaryId,
     selectedSummary,
     errorMessage,
     showEditor,
     isLoadingSummaries,
     isCreating,
-    handleSelectSnippet,
+    handleSelectSummary,
     handleSubmitText,
     handleCreateNewSummary,
   } = useHomeSummaries();
@@ -29,9 +29,9 @@ export function Home() {
   return (
     <div className="flex h-screen bg-white dark:bg-black">
       <Sidebar
-        snippets={summaries}
-        selectedId={selectedSnippetId}
-        onSelectSnippet={handleSelectSnippet}
+        Summarys={summaries}
+        selectedId={selectedSummaryId}
+        onSelectSummary={handleSelectSummary}
         isLoading={isLoadingSummaries}
         isOpen={isSidebarOpen}
         onClose={() => setIsSidebarOpen(false)}

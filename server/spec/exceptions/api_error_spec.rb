@@ -1,7 +1,8 @@
 # frozen_string_literal: true
+
 require 'rails_helper'
 
-RSpec.describe Exceptions::ApiError do
+RSpec.describe ApiError do
   describe "initialization" do
     it "stores message as exception message" do
       error = described_class.new("Test error")
@@ -92,7 +93,7 @@ RSpec.describe Exceptions::ApiError do
   end
 end
 
-RSpec.describe Exceptions::BadRequestError do
+RSpec.describe BadRequestError do
   describe "initialization" do
     it "sets status to 400" do
       error = described_class.new("Invalid request")
@@ -111,7 +112,7 @@ RSpec.describe Exceptions::BadRequestError do
 
     it "uses default message when not provided" do
       error = described_class.new
-      expect(error.message).to eq("The request is invalid or missing required parameters.")
+      expect(error.message).to eq("A requisição é inválida ou está faltando parâmetros obrigatórios.")
     end
 
     it "stores details when provided" do
@@ -124,12 +125,12 @@ RSpec.describe Exceptions::BadRequestError do
   describe "inheritance" do
     it "is an ApiError" do
       error = described_class.new
-      expect(error).to be_a(Exceptions::ApiError)
+      expect(error).to be_a(ApiError)
     end
   end
 end
 
-RSpec.describe Exceptions::NotFoundError do
+RSpec.describe NotFoundError do
   describe "initialization" do
     it "sets status to 404" do
       error = described_class.new(resource: "User")
@@ -143,12 +144,12 @@ RSpec.describe Exceptions::NotFoundError do
 
     it "includes resource name in message" do
       error = described_class.new(resource: "Post")
-      expect(error.message).to eq("Post could not be found.")
+      expect(error.message).to eq("Post não encontrado.")
     end
 
     it "uses default resource name when not provided" do
       error = described_class.new
-      expect(error.message).to eq("Resource could not be found.")
+      expect(error.message).to eq("Recurso não encontrado.")
     end
 
     it "stores details when provided" do
@@ -161,12 +162,12 @@ RSpec.describe Exceptions::NotFoundError do
   describe "inheritance" do
     it "is an ApiError" do
       error = described_class.new
-      expect(error).to be_a(Exceptions::ApiError)
+      expect(error).to be_a(ApiError)
     end
   end
 end
 
-RSpec.describe Exceptions::ValidationError do
+RSpec.describe ValidationError do
   describe "initialization" do
     it "sets status to 422" do
       error = described_class.new
@@ -185,12 +186,12 @@ RSpec.describe Exceptions::ValidationError do
 
     it "generates message from entity when message not provided" do
       error = described_class.new(entity: "Summary")
-      expect(error.message).to eq("Summary validation failed. Please check the provided data.")
+      expect(error.message).to eq("Validação do Summary falhou. Por favor, verifique os dados fornecidos.")
     end
 
     it "uses default entity name when not provided" do
       error = described_class.new
-      expect(error.message).to eq("Record validation failed. Please check the provided data.")
+      expect(error.message).to eq("Validação do Registro falhou. Por favor, verifique os dados fornecidos.")
     end
 
     it "stores details when provided" do
@@ -203,12 +204,12 @@ RSpec.describe Exceptions::ValidationError do
   describe "inheritance" do
     it "is an ApiError" do
       error = described_class.new
-      expect(error).to be_a(Exceptions::ApiError)
+      expect(error).to be_a(ApiError)
     end
   end
 end
 
-RSpec.describe Exceptions::InternalServerError do
+RSpec.describe InternalServerError do
   describe "initialization" do
     it "sets status to 500" do
       error = described_class.new("Server error")
@@ -227,7 +228,7 @@ RSpec.describe Exceptions::InternalServerError do
 
     it "uses default message when not provided" do
       error = described_class.new
-      expect(error.message).to eq("An unexpected error occurred while processing your request.")
+      expect(error.message).to eq("Ocorreu um erro inesperado ao processar sua requisição.")
     end
 
     it "stores details when provided" do
@@ -240,12 +241,12 @@ RSpec.describe Exceptions::InternalServerError do
   describe "inheritance" do
     it "is an ApiError" do
       error = described_class.new
-      expect(error).to be_a(Exceptions::ApiError)
+      expect(error).to be_a(ApiError)
     end
   end
 end
 
-RSpec.describe Exceptions::ExternalServiceError do
+RSpec.describe ExternalServiceError do
   describe "initialization" do
     it "sets status to 502" do
       error = described_class.new(service_name: "Gemini API")
@@ -259,7 +260,7 @@ RSpec.describe Exceptions::ExternalServiceError do
 
     it "includes service name in default message" do
       error = described_class.new(service_name: "Payment Gateway")
-      expect(error.message).to eq("Payment Gateway is temporarily unavailable. Please try again later.")
+      expect(error.message).to eq("Payment Gateway está temporariamente indisponível. Tente novamente mais tarde.")
     end
 
     it "uses custom message when provided" do
@@ -269,7 +270,7 @@ RSpec.describe Exceptions::ExternalServiceError do
 
     it "uses default service name when not provided" do
       error = described_class.new
-      expect(error.message).to eq("External service is temporarily unavailable. Please try again later.")
+      expect(error.message).to eq("Serviço externo está temporariamente indisponível. Tente novamente mais tarde.")
     end
 
     it "stores details when provided" do
@@ -282,7 +283,7 @@ RSpec.describe Exceptions::ExternalServiceError do
   describe "inheritance" do
     it "is an ApiError" do
       error = described_class.new
-      expect(error).to be_a(Exceptions::ApiError)
+      expect(error).to be_a(ApiError)
     end
   end
 end
@@ -291,11 +292,11 @@ RSpec.describe "Exception error codes" do
   describe "all exceptions have error_code attribute" do
     let(:exceptions_to_test) do
       [
-        Exceptions::BadRequestError.new,
-        Exceptions::NotFoundError.new,
-        Exceptions::ValidationError.new,
-        Exceptions::InternalServerError.new,
-        Exceptions::ExternalServiceError.new
+        BadRequestError.new,
+        NotFoundError.new,
+        ValidationError.new,
+        InternalServerError.new,
+        ExternalServiceError.new
       ]
     end
 
@@ -311,11 +312,11 @@ RSpec.describe "Exception error codes" do
   describe "all exceptions have status attribute" do
     let(:exceptions_to_test) do
       [
-        Exceptions::BadRequestError.new,
-        Exceptions::NotFoundError.new,
-        Exceptions::ValidationError.new,
-        Exceptions::InternalServerError.new,
-        Exceptions::ExternalServiceError.new
+        BadRequestError.new,
+        NotFoundError.new,
+        ValidationError.new,
+        InternalServerError.new,
+        ExternalServiceError.new
       ]
     end
 
@@ -332,11 +333,11 @@ RSpec.describe "Exception error codes" do
   describe "all exceptions have message attribute" do
     let(:exceptions_to_test) do
       [
-        Exceptions::BadRequestError.new,
-        Exceptions::NotFoundError.new,
-        Exceptions::ValidationError.new,
-        Exceptions::InternalServerError.new,
-        Exceptions::ExternalServiceError.new
+        BadRequestError.new,
+        NotFoundError.new,
+        ValidationError.new,
+        InternalServerError.new,
+        ExternalServiceError.new
       ]
     end
 
@@ -352,50 +353,50 @@ end
 
 RSpec.describe "Exception attributes accessibility" do
   it "status is readable" do
-    error = Exceptions::BadRequestError.new("Error")
+    error = BadRequestError.new("Error")
     expect(error.status).to eq(400)
   end
 
   it "error_code is readable" do
-    error = Exceptions::BadRequestError.new("Error")
+    error = BadRequestError.new("Error")
     expect(error.error_code).to eq("bad_request")
   end
 
   it "details is readable" do
     details = { field: "value" }
-    error = Exceptions::BadRequestError.new("Error", details: details)
+    error = BadRequestError.new("Error", details: details)
     expect(error.details).to eq(details)
   end
 
   it "context is readable via ApiError" do
     context = { user_id: 1 }
-    error = Exceptions::ApiError.new("Error", context: context)
+    error = ApiError.new("Error", context: context)
     expect(error.context).to eq(context)
   end
 
   it "status is not writable (private)" do
-    error = Exceptions::BadRequestError.new("Error")
+    error = BadRequestError.new("Error")
     expect {
       error.status = 404
     }.to raise_error(NoMethodError)
   end
 
   it "error_code is not writable (private)" do
-    error = Exceptions::BadRequestError.new("Error")
+    error = BadRequestError.new("Error")
     expect {
       error.error_code = "custom"
     }.to raise_error(NoMethodError)
   end
 
   it "details is not writable (private)" do
-    error = Exceptions::BadRequestError.new("Error")
+    error = BadRequestError.new("Error")
     expect {
       error.details = {}
     }.to raise_error(NoMethodError)
   end
 
   it "context is not writable (private)" do
-    error = Exceptions::ApiError.new("Error", context: {})
+    error = ApiError.new("Error", context: {})
     expect {
       error.context = {}
     }.to raise_error(NoMethodError)

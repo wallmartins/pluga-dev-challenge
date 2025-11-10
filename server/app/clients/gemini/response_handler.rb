@@ -15,11 +15,11 @@ module Gemini
       when Net::HTTPBadRequest
         client_error
       when Net::HTTPClientError
-        raise Exceptions::ExternalServiceError.new(service_name: "Gemini API", message: "Erro do cliente (#{@response.code}).")
+        raise ExternalServiceError.new(service_name: "Gemini API", message: "Erro do cliente (#{@response.code}).")
       when Net::HTTPServerError
         server_error
       else
-        raise Exceptions::ExternalServiceError.new(service_name: "Gemini API", message: "Resposta inesperada (#{@response.code}).")
+        raise ExternalServiceError.new(service_name: "Gemini API", message: "Resposta inesperada (#{@response.code}).")
       end
     end
 
@@ -30,7 +30,7 @@ module Gemini
       text = parsed.dig("candidates", 0, "content", "parts", 0, "text")
 
       if text.blank? || text.match?(/ignore|instruction/i)
-        raise Exceptions::ExternalServiceError.new(
+        raise ExternalServiceError.new(
           service_name: "Gemini API",
           message: "Resposta inesperada ou potencialmente insegura."
         )
@@ -38,7 +38,7 @@ module Gemini
 
       text.strip
     rescue JSON::ParserError => e
-      raise Exceptions::ExternalServiceError.new(
+      raise ExternalServiceError.new(
         service_name: "Gemini API",
         message: "Resposta malformada do Gemini",
         details: e.message
@@ -48,7 +48,7 @@ module Gemini
     def client_error
       parsed = JSON.parse(@response.body) rescue {}
       message = parsed.dig("error", "message") || "Requisição inválida enviada à API Gemini."
-      raise Exceptions::BadRequestError.new(
+      raise BadRequestError.new(
         "Gemini API rejeitou a requisição: #{message}",
         details: { code: @response.code, body: parsed }
       )
@@ -57,7 +57,7 @@ module Gemini
     def server_error
       parsed = JSON.parse(@response.body) rescue {}
       message = parsed.dig("error", "message") || "Serviço Gemini indisponível."
-      raise Exceptions::ExternalServiceError.new(
+      raise ExternalServiceError.new(
         service_name: "Gemini API",
         message: message,
         details: { code: @response.code, body: parsed }

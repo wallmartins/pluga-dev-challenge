@@ -1,11 +1,12 @@
 # frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe ApplicationController do
   describe "#handle_api_error" do
     it "renders error with correct status from exception" do
       controller = SummariesController.new
-      exception = Exceptions::BadRequestError.new("Invalid input")
+      exception = BadRequestError.new("Invalid input")
 
       expect(controller).to receive(:render) do |args|
         expect(args[:status]).to eq(400)
@@ -19,7 +20,7 @@ RSpec.describe ApplicationController do
 
     it "uses ErrorSerializer to format response" do
       controller = SummariesController.new
-      exception = Exceptions::ValidationError.new(entity: "Test")
+      exception = ValidationError.new(entity: "Test")
 
       expect(controller).to receive(:render) do |args|
         expect(args[:json]).to have_key(:error)
@@ -31,14 +32,14 @@ RSpec.describe ApplicationController do
 
     it "logs the error before rendering" do
       controller = SummariesController.new
-      exception = Exceptions::BadRequestError.new("Log test")
+      exception = BadRequestError.new("Log test")
       allow(Rails.logger).to receive(:error)
       allow(controller).to receive(:render)
 
       controller.send(:handle_api_error, exception)
 
       expect(Rails.logger).to have_received(:error).with(
-        /\[Exceptions::BadRequestError\] Log test/
+        /\[BadRequestError\] Log test/
       )
     end
   end
@@ -81,7 +82,7 @@ RSpec.describe ApplicationController do
       expect(controller).to receive(:render) do |args|
         expect(args[:status]).to eq(500)
         expect(args[:json][:error][:code]).to eq('internal_server_error')
-        expect(args[:json][:error][:message]).to eq('Database connection failed')
+        expect(args[:json][:error][:message]).to eq('Ocorreu um erro inesperado. Por favor, tente novamente.')
       end
 
       controller.send(:handle_internal_error, exception)
@@ -105,14 +106,14 @@ RSpec.describe ApplicationController do
   describe "#log_error" do
     it "logs error with exception class, message, and context" do
       controller = SummariesController.new
-      exception = Exceptions::BadRequestError.new("Test message")
+      exception = BadRequestError.new("Test message")
 
       allow(Rails.logger).to receive(:error)
 
       controller.send(:log_error, exception)
 
       expect(Rails.logger).to have_received(:error).with(
-        /\[Exceptions::BadRequestError\] Test message/
+        /\[BadRequestError\] Test message/
       )
     end
 
@@ -172,7 +173,7 @@ RSpec.describe ApplicationController do
   describe "error context information" do
     it "includes controller name in error context" do
       controller = SummariesController.new
-      exception = Exceptions::BadRequestError.new("Test")
+      exception = BadRequestError.new("Test")
 
       expect(controller).to receive(:render) do |args|
         expect(args[:json][:error][:context][:controller]).to eq('SummariesController')
@@ -183,7 +184,7 @@ RSpec.describe ApplicationController do
 
     it "includes action name in error context" do
       controller = SummariesController.new
-      exception = Exceptions::BadRequestError.new("Test")
+      exception = BadRequestError.new("Test")
       allow(controller).to receive(:action_name).and_return('create')
 
       expect(controller).to receive(:render) do |args|
@@ -195,10 +196,10 @@ RSpec.describe ApplicationController do
 
     it "includes exception class name in error context" do
       controller = SummariesController.new
-      exception = Exceptions::ValidationError.new(entity: "User")
+      exception = ValidationError.new(entity: "User")
 
       expect(controller).to receive(:render) do |args|
-        expect(args[:json][:error][:context][:exception_class]).to eq('Exceptions::ValidationError')
+        expect(args[:json][:error][:context][:exception_class]).to eq('ValidationError')
       end
 
       controller.send(:handle_api_error, exception)
