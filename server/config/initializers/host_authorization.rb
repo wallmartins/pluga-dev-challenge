@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Configure host authorization for testing
 # This allows requests from localhost and 127.0.0.1 in test environment
 if Rails.env.test?

@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # app/controllers/summaries_controller.rb
 class SummariesController < ApplicationController
   def index

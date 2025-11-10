@@ -23,4 +23,3 @@ class GenerateSummaries
     SummarizeTextService.new(text).call
   end
 end
-

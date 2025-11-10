@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 class SummarizeTextService
   def initialize(text)
     @text = text

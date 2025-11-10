@@ -13,4 +13,3 @@ Rswag::Ui.configure do |c|
   # c.basic_auth_enabled = true
   # c.basic_auth_credentials 'username', 'password'
 end
-

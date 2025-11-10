@@ -1,4 +1,5 @@
 import { createSummariesApi, createApiClient } from "./api-client";
+import type { AxiosInstance } from "axios";
 
 interface MockResponse {
   id: string;
@@ -45,7 +46,7 @@ describe("api-client", () => {
       const mockApiClient = {
         post: jest.fn().mockResolvedValue({ data: mockResponse }),
       };
-      const api = createSummariesApi(mockApiClient as unknown as typeof createApiClient);
+      const api = createSummariesApi(mockApiClient as unknown as AxiosInstance);
 
       const result = await api.create({ summary: { original_post: "test" } });
       expect(result).toEqual(mockResponse);
@@ -67,7 +68,7 @@ describe("api-client", () => {
       const mockApiClient = {
         get: jest.fn().mockResolvedValue({ data: mockResponse }),
       };
-      const api = createSummariesApi(mockApiClient as unknown as typeof createApiClient);
+      const api = createSummariesApi(mockApiClient as unknown as AxiosInstance);
 
       const result = await api.getById("123");
       expect(result).toEqual(mockResponse);
@@ -89,7 +90,7 @@ describe("api-client", () => {
       const mockApiClient = {
         get: jest.fn().mockResolvedValue({ data: mockResponse }),
       };
-      const api = createSummariesApi(mockApiClient as unknown as typeof createApiClient);
+      const api = createSummariesApi(mockApiClient as unknown as AxiosInstance);
 
       const result = await api.list();
       expect(result).toEqual(mockResponse);
