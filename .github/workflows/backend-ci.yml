@@ -4,13 +4,13 @@ on:
   push:
     branches: [main, develop]
     paths:
-      - 'server/**'
-      - '.github/workflows/backend-ci.yml'
+      - "server/**"
+      - ".github/workflows/backend-ci.yml"
   pull_request:
     branches: [main, develop]
     paths:
-      - 'server/**'
-      - '.github/workflows/backend-ci.yml'
+      - "server/**"
+      - ".github/workflows/backend-ci.yml"
 
 jobs:
   lint:
@@ -24,7 +24,7 @@ jobs:
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.4'
+          ruby-version: "3.4"
           bundler-cache: true
           working-directory: server
 
@@ -43,7 +43,7 @@ jobs:
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.4'
+          ruby-version: "3.4"
           bundler-cache: true
           working-directory: server
 
@@ -92,13 +92,13 @@ jobs:
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.4'
+          ruby-version: "3.4"
           bundler-cache: true
           working-directory: server
 
       - name: Set up database
         run: |
-          bundle exec rails db:drop --if-exists
+          bundle exec rails db:drop
           bundle exec rails db:create
           bundle exec rails db:migrate
         working-directory: server
