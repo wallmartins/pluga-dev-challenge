@@ -49,7 +49,7 @@ RSpec.describe ApplicationController do
       expect(controller).to receive(:render) do |args|
         expect(args[:status]).to eq(404)
         expect(args[:json][:error][:code]).to eq('not_found')
-        expect(args[:json][:error][:message]).to match(/Summary could not be found/)
+        expect(args[:json][:error][:message]).to match(/Summary não encontrado/)
       end
 
       controller.send(:handle_not_found, nil)
@@ -64,7 +64,7 @@ RSpec.describe ApplicationController do
       expect(controller).to receive(:render) do |args|
         expect(args[:status]).to eq(400)
         expect(args[:json][:error][:code]).to eq('bad_request')
-        expect(args[:json][:error][:message]).to match(/Missing required parameter: email/)
+        expect(args[:json][:error][:message]).to match(/Parâmetro obrigatório ausente: email/)
         expect(args[:json][:error][:details][:parameter]).to eq(:email)
       end
 

@@ -71,7 +71,7 @@ RSpec.describe SummarizeTextService do
         expect {
           service.call
         }.to raise_error(Exceptions::ExternalServiceError) do |error|
-          expect(error.message).to include("Unexpected error")
+          expect(error.message).to include("Erro inesperado")
           expect(error.details).to include("Network error")
         end
       end

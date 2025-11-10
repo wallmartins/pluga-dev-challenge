@@ -8,10 +8,12 @@ export function useHomeSummaries() {
   const [shouldPoll, setShouldPoll] = useState(false);
   const [showEditor, setShowEditor] = useState(true);
 
-  const { data: summaries = [], isLoading: isLoadingSummaries, refetch: refetchSummaries } = useQuery({
+  const { data: allSummaries = [], isLoading: isLoadingSummaries, refetch: refetchSummaries } = useQuery({
     queryKey: ["summaries"],
     queryFn: () => summariesApi.list(),
   });
+
+  const summaries = allSummaries.filter((summary) => summary.status !== "failed");
 
   const { data: selectedSummary, refetch: refetchSelectedSummary } = useQuery({
     queryKey: ["summary", selectedSnippetId],
@@ -20,7 +22,21 @@ export function useHomeSummaries() {
   });
 
   useEffect(() => {
-    if (!shouldPoll || selectedSummary?.status !== "pending") {
+    if (!shouldPoll || !selectedSummary) {
+      return;
+    }
+
+    if (selectedSummary.status === "failed") {
+      setErrorMessage(
+        selectedSummary.summary || "Falha ao criar o resumo. Tente novamente."
+      );
+      setShouldPoll(false);
+      return;
+    }
+
+    if (selectedSummary.status !== "pending") {
+      setShouldPoll(false);
+      setErrorMessage(null);
       return;
     }
 
@@ -30,17 +46,19 @@ export function useHomeSummaries() {
     }, 1500);
 
     return () => clearInterval(interval);
-  }, [shouldPoll, selectedSummary?.status, refetchSelectedSummary, refetchSummaries]);
+  }, [shouldPoll, selectedSummary, refetchSelectedSummary, refetchSummaries]);
 
   const createSummaryMutation = useMutation({
     mutationFn: (text: string) =>
       summariesApi.create({ summary: { original_post: text } }),
     onSuccess: (newSummary) => {
-      setSelectedSnippetId(newSummary.id);
-      setErrorMessage(null);
-      setShouldPoll(true);
-      setShowEditor(false);
-      refetchSummaries();
+      if (newSummary?.id) {
+        setSelectedSnippetId(newSummary.id);
+        setErrorMessage(null);
+        setShouldPoll(true);
+        setShowEditor(false);
+        refetchSummaries();
+      }
     },
     onError: (error) => {
       const message = error instanceof Error ? error.message : "Erro ao criar resumo";

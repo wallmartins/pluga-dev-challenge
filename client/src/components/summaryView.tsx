@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { ThinkingBubble } from "@/components/thinkingBubble";
 import { ProjectIntro } from "@/components/projectIntro";
@@ -24,20 +24,31 @@ export function SummaryView({
   const [showContent, setShowContent] = useState(false);
   const [animationComplete, setAnimationComplete] = useState(false);
   const [wasLoadingBefore, setWasLoadingBefore] = useState(false);
+  const [previousSummary, setPreviousSummary] = useState<string | null>(null);
 
   useEffect(() => {
-    if (isLoading) {
+    if (summary !== previousSummary) {
+      setPreviousSummary(summary);
+
+      if (!isLoading && summary) {
+        setShowContent(true);
+        setAnimationComplete(true);
+        setWasLoadingBefore(false);
+      }
+    }
+  }, [summary, previousSummary, isLoading]);
+
+  useEffect(() => {
+    if (isLoading && !summary) {
       setWasLoadingBefore(true);
       setShowContent(false);
       setAnimationComplete(false);
-    } else if (!isLoading && summary) {
-      if (wasLoadingBefore) {
-        if (animationComplete) {
-          setShowContent(true);
-        }
-      } else {
-        setShowContent(true);
+    } else if (summary && !isLoading) {
+      if (wasLoadingBefore && !animationComplete) {
+        return;
       }
+      setShowContent(true);
+      setWasLoadingBefore(false);
     }
   }, [isLoading, summary, animationComplete, wasLoadingBefore]);
 
@@ -45,14 +56,12 @@ export function SummaryView({
   const displayText = showOriginal ? originalText : summary;
   const buttonLabel = showOriginal ? "Resumo" : "Original";
 
-  const handleAnimationComplete = () => {
+  const handleAnimationComplete = useCallback(() => {
     setAnimationComplete(true);
-    if (summary) {
-      setShowContent(true);
-    }
-  };
+    setShowContent(true);
+  }, []);
 
-  const shouldShowThinkingBubble = isLoading || (!showContent && summary && wasLoadingBefore);
+  const shouldShowThinkingBubble = (isLoading && !summary) || (wasLoadingBefore && !animationComplete && summary);
 
   return (
     <div className="flex flex-col gap-3 sm:gap-4">
@@ -78,7 +87,7 @@ export function SummaryView({
         )}
       >
         {shouldShowThinkingBubble && (
-          <div className="animate-in fade-in duration-300">
+          <div className="animate-in fade-in duration-300" key="thinking-bubble">
             <ThinkingBubble onComplete={handleAnimationComplete} />
           </div>
         )}

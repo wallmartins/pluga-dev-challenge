@@ -29,7 +29,7 @@ RSpec.describe GenerateSummaries do
         expect {
           described_class.call(nil)
         }.to raise_error(Exceptions::ValidationError) do |error|
-          expect(error.message).to include("cannot be empty")
+          expect(error.message).to include("não pode estar vazio")
           expect(error.status).to eq(422)
         end
       end
@@ -38,7 +38,7 @@ RSpec.describe GenerateSummaries do
         expect {
           described_class.call(nil)
         }.to raise_error(Exceptions::ValidationError) do |error|
-          expect(error.details[:original_post]).to include("must be provided")
+          expect(error.details[:original_post]).to include("deve ser fornecido")
         end
       end
     end
@@ -48,7 +48,7 @@ RSpec.describe GenerateSummaries do
         expect {
           described_class.call("")
         }.to raise_error(Exceptions::ValidationError) do |error|
-          expect(error.message).to include("cannot be empty")
+          expect(error.message).to include("não pode estar vazio")
         end
       end
 
@@ -66,7 +66,7 @@ RSpec.describe GenerateSummaries do
         expect {
           described_class.call(short_text)
         }.to raise_error(Exceptions::ValidationError) do |error|
-          expect(error.message).to include("must have at least 30 characters")
+          expect(error.message).to include("deve ter pelo menos 30 caracteres")
         end
       end
 
@@ -76,7 +76,7 @@ RSpec.describe GenerateSummaries do
         expect {
           described_class.call(short_text)
         }.to raise_error(Exceptions::ValidationError) do |error|
-          expect(error.details[:original_post]).to include(/minimum is 30 characters/)
+          expect(error.details[:original_post]).to include(/mínimo de 30 caracteres/)
         end
       end
 

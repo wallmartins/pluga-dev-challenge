@@ -27,7 +27,7 @@ class ApplicationController < ActionController::API
 
   def handle_parameter_missing(exception)
     error = Exceptions::BadRequestError.new(
-      "Missing required parameter: #{exception.param}",
+      "Parâmetro obrigatório ausente: #{exception.param}",
       details: { parameter: exception.param }
     )
     render json: ErrorSerializer.new(
@@ -38,7 +38,9 @@ class ApplicationController < ActionController::API
   end
 
   def handle_internal_error(exception)
-    error = Exceptions::InternalServerError.new(exception.message)
+    error = Exceptions::InternalServerError.new(
+      "Ocorreu um erro inesperado. Por favor, tente novamente."
+    )
     log_error(exception)
     render json: ErrorSerializer.new(
       exception: error,

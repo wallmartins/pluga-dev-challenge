@@ -27,7 +27,7 @@ RSpec.describe SummarizeSummaryJob do
     end
 
     context "when GenerateSummaries raises ApiError" do
-      it "updates summary status to failed" do
+      it "updates summary status to failed with user-friendly message" do
         error = Exceptions::BadRequestError.new("Invalid request")
         allow(GenerateSummaries).to receive(:call).and_raise(error)
 
@@ -37,6 +37,7 @@ RSpec.describe SummarizeSummaryJob do
 
         summary.reload
         expect(summary.status).to eq("failed")
+        expect(summary.summary).to include("padrões suspeitos")
       end
 
       it "logs the error" do
@@ -49,7 +50,7 @@ RSpec.describe SummarizeSummaryJob do
         }.to raise_error(Exceptions::ExternalServiceError)
 
         expect(Rails.logger).to have_received(:error).with(
-          /Gemini API error while summarizing ID=#{summary.id}/
+          /External service error while summarizing ID=#{summary.id}/
         )
       end
 
@@ -103,9 +104,20 @@ RSpec.describe SummarizeSummaryJob do
         expect {
           described_class.new.perform(summary.id)
         }.to raise_error(Exceptions::InternalServerError) do |error|
-          expect(error.message).to include("Failed to process summary")
+          expect(error.message).to include("Falha ao processar resumo")
           expect(error.status).to eq(500)
         end
+      end
+
+      it "saves user-friendly error message to summary" do
+        allow(GenerateSummaries).to receive(:call).and_raise(StandardError, "Unknown error")
+
+        expect {
+          described_class.new.perform(summary.id)
+        }.to raise_error(Exceptions::InternalServerError)
+
+        summary.reload
+        expect(summary.summary).to include("erro inesperado")
       end
     end
 
@@ -117,7 +129,7 @@ RSpec.describe SummarizeSummaryJob do
         expect {
           described_class.new.perform(non_existent_id)
         }.to raise_error(Exceptions::InternalServerError) do |error|
-          expect(error.message).to include("Failed to process summary")
+          expect(error.message).to include("Falha ao processar resumo")
           expect(error.status).to eq(500)
         end
 
