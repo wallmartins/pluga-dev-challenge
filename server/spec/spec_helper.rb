@@ -21,10 +21,10 @@ require_relative "../config/environment"
 if Rails.env.production?
   if ENV["CI"].present?
     warn "⚠️ Running in production under CI mode — skipping tests."
-    exit 0
+    return
   else
     warn "⚠️ Detected production environment — skipping tests to avoid data loss."
-    exit 0
+    return
   end
 end
 
