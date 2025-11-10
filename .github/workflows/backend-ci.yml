@@ -79,7 +79,7 @@ jobs:
     env:
       DATABASE_URL: postgresql://postgres:postgres@localhost:5432/pluga_challenge_test
       RAILS_ENV: test
-      GEMINI_API_KEY: test_key_for_ci
+      GEMINI_KEY: test_key_for_ci
 
     steps:
       - name: Checkout code
