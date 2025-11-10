@@ -1,0 +1,52 @@
+services:
+  # PostgreSQL Database
+  - type: pserv
+    name: pluga-db
+    plan: free
+    ipAddress: private
+    databaseName: pluga_prod
+    user: postgres
+
+  # Rails Backend API
+  - type: web
+    name: pluga-backend
+    plan: free
+    runtime: ruby
+    runtimeVersion: 3.4.7
+    buildCommand: cd server && bundle install && bundle exec rails assets:precompile && bundle exec rails db:migrate
+    startCommand: cd server && bundle exec rails server -p $PORT -b 0.0.0.0
+    envVars:
+      - key: RAILS_ENV
+        value: production
+      - key: RAILS_LOG_TO_STDOUT
+        value: "true"
+      - key: RAILS_SERVE_STATIC_FILES
+        value: "true"
+      - key: SECRET_KEY_BASE
+        sync: false
+      - key: GEMINI_KEY
+        sync: false
+      - key: CLIENT_ORIGIN
+        value: https://pluga-frontend.onrender.com
+      - key: DATABASE_URL
+        fromDatabase:
+          name: pluga-db
+          property: connectionString
+    healthCheckPath: /up
+    connectToDatabase: true
+    repo: https://github.com/seu-usuario/pluga-dev-challenge
+
+  # Next.js Frontend
+  - type: web
+    name: pluga-frontend
+    plan: free
+    runtime: node
+    runtimeVersion: 20.9.0
+    buildCommand: cd client && npm install && npm run build
+    startCommand: cd client && npm run start -- -p $PORT -H 0.0.0.0
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NEXT_PUBLIC_API_BASE_URL
+        value: https://pluga-backend.onrender.com
+    repo: https://github.com/seu-usuario/pluga-dev-challenge
