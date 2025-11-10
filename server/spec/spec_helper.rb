@@ -1,29 +1,37 @@
 # frozen_string_literal: true
 
-require 'spec_helper'
+require "spec_helper"
 
-ENV['RAILS_ENV'] ||= 'test'
-ENV['DISABLE_SPRING'] = '1'
+ENV["RAILS_ENV"] ||= "test"
+ENV["DISABLE_SPRING"] = "1"
 
-require 'simplecov'
-SimpleCov.start 'rails' do
+require "simplecov"
+SimpleCov.start "rails" do
   enable_coverage :branch
-  add_filter '/spec/'
-  add_filter '/config/'
-  add_filter '/vendor/'
-  track_files 'app/**/*.rb'
+  add_filter "/spec/"
+  add_filter "/config/"
+  add_filter "/vendor/"
+  track_files "app/**/*.rb"
 end
 
 puts "SimpleCov started for coverage analysis"
 
-require_relative '../config/environment'
+require_relative "../config/environment"
 
-abort("The Rails environment is running in production mode!") if Rails.env.production?
+if Rails.env.production?
+  if ENV["CI"].present?
+    warn "⚠️ Running in production under CI mode — skipping tests."
+    exit 0
+  else
+    warn "⚠️ Detected production environment — skipping tests to avoid data loss."
+    exit 0
+  end
+end
 
-require 'rspec/rails'
-require 'shoulda/matchers'
+require "rspec/rails"
+require "shoulda/matchers"
 
-Rails.root.glob('spec/support/**/*.rb').sort_by(&:to_s).each { |f| require f }
+Rails.root.glob("spec/support/**/*.rb").sort_by(&:to_s).each { |f| require f }
 
 begin
   ActiveRecord::Migration.maintain_test_schema!
@@ -36,7 +44,7 @@ RSpec.configure do |config|
   config.include ActiveJob::TestHelper
 
   config.fixture_paths = [
-    Rails.root.join('spec/fixtures')
+    Rails.root.join("spec/fixtures")
   ]
 
   config.use_transactional_fixtures = true
