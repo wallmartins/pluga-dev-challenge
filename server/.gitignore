@@ -4,7 +4,8 @@
 *.gem                
 
 # === Variáveis de ambiente ===
-/.env*                 
+/.env*                
+!.env.example 
 
 # === Logs e arquivos temporários ===
 /log/*
