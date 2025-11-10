@@ -19,6 +19,8 @@ Style/FrozenStringLiteralComment:
     - "config/initializers/cors.rb"
     - "config/initializers/rswag.rb"
     - "config/initializers/rswag_ui.rb"
+    - "spec/spec_helper.rb"
+    - "spec/rails_helper.rb"
 
 Metrics/MethodLength:
   Max: 15

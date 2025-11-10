@@ -74,6 +74,7 @@ RSpec.describe GenerateSummaries do
 
       it "includes minimum length in details" do
         short_text = Faker::Lorem.sentence(word_count: 3)
+        allow_any_instance_of(SummarizeTextService).to receive(:call).and_return(expected_summary)
 
         expect {
           described_class.call(short_text)

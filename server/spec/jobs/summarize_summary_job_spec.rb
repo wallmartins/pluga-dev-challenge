@@ -28,7 +28,37 @@ RSpec.describe SummarizeSummaryJob do
       end
     end
 
-    context "when GenerateSummaries raises ApiError" do
+    context "when GenerateSummaries raises ValidationError" do
+      it "updates summary status to failed with validation error message" do
+        error = Exceptions::ValidationError.new(entity: "Summary", message: "Invalid content")
+        allow(GenerateSummaries).to receive(:call).and_raise(error)
+
+        expect {
+          described_class.new.perform(summary.id)
+        }.to raise_error(Exceptions::ValidationError)
+
+        summary.reload
+        expect(summary.status).to eq("failed")
+        expect(summary.summary).to eq("Invalid content")
+      end
+
+      it "logs validation error" do
+        error = Exceptions::ValidationError.new(entity: "Summary", message: "Invalid content")
+        allow(GenerateSummaries).to receive(:call).and_raise(error)
+        allow(Rails.logger).to receive(:error)
+
+        expect {
+          described_class.new.perform(summary.id)
+        }.to raise_error(Exceptions::ValidationError)
+
+        expect(Rails.logger).to have_received(:error).with(
+          /Validation error while summarizing ID=#{summary.id}/
+        )
+      end
+
+    end
+
+    context "when GenerateSummaries raises BadRequestError" do
       it "updates summary status to failed with user-friendly message" do
         error = Exceptions::BadRequestError.new("Invalid request")
         allow(GenerateSummaries).to receive(:call).and_raise(error)
@@ -42,7 +72,46 @@ RSpec.describe SummarizeSummaryJob do
         expect(summary.summary).to include("padrões suspeitos")
       end
 
-      it "logs the error" do
+      it "logs bad request error" do
+        error = Exceptions::BadRequestError.new("Invalid request")
+        allow(GenerateSummaries).to receive(:call).and_raise(error)
+        allow(Rails.logger).to receive(:error)
+
+        expect {
+          described_class.new.perform(summary.id)
+        }.to raise_error(Exceptions::BadRequestError)
+
+        expect(Rails.logger).to have_received(:error).with(
+          /Bad request while summarizing ID=#{summary.id}/
+        )
+      end
+
+      it "re-raises the error" do
+        error = Exceptions::BadRequestError.new("Invalid request")
+        allow(GenerateSummaries).to receive(:call).and_raise(error)
+
+        expect {
+          described_class.new.perform(summary.id)
+        }.to raise_error(Exceptions::BadRequestError, /Invalid request/)
+      end
+
+    end
+
+    context "when GenerateSummaries raises ExternalServiceError" do
+      it "updates summary status to failed with service unavailable message" do
+        error = Exceptions::ExternalServiceError.new(service_name: "Gemini API")
+        allow(GenerateSummaries).to receive(:call).and_raise(error)
+
+        expect {
+          described_class.new.perform(summary.id)
+        }.to raise_error(Exceptions::ExternalServiceError)
+
+        summary.reload
+        expect(summary.status).to eq("failed")
+        expect(summary.summary).to include("temporariamente indisponível")
+      end
+
+      it "logs external service error" do
         error = Exceptions::ExternalServiceError.new(service_name: "Gemini API")
         allow(GenerateSummaries).to receive(:call).and_raise(error)
         allow(Rails.logger).to receive(:error)
@@ -56,22 +125,54 @@ RSpec.describe SummarizeSummaryJob do
         )
       end
 
-      it "re-raises the ApiError" do
-        error = Exceptions::BadRequestError.new("Invalid API key")
+      it "re-raises the error" do
+        error = Exceptions::ExternalServiceError.new(service_name: "Gemini API")
         allow(GenerateSummaries).to receive(:call).and_raise(error)
 
         expect {
           described_class.new.perform(summary.id)
-        }.to raise_error(Exceptions::BadRequestError, /Invalid API key/)
+        }.to raise_error(Exceptions::ExternalServiceError)
       end
 
-      it "does not execute summary.update! when summary is nil before error occurs" do
-        non_existent_id = 99999
+    end
+
+    context "when GenerateSummaries raises generic ApiError" do
+      it "updates summary status to failed with api error message" do
+        error = Exceptions::ApiError.new("Generic API error")
+        allow(GenerateSummaries).to receive(:call).and_raise(error)
 
         expect {
-          described_class.new.perform(non_existent_id)
-        }.to raise_error(Exceptions::InternalServerError)
+          described_class.new.perform(summary.id)
+        }.to raise_error(Exceptions::ApiError)
+
+        summary.reload
+        expect(summary.status).to eq("failed")
+        expect(summary.summary).to eq("Generic API error")
       end
+
+      it "logs api error" do
+        error = Exceptions::ApiError.new("Generic API error")
+        allow(GenerateSummaries).to receive(:call).and_raise(error)
+        allow(Rails.logger).to receive(:error)
+
+        expect {
+          described_class.new.perform(summary.id)
+        }.to raise_error(Exceptions::ApiError)
+
+        expect(Rails.logger).to have_received(:error).with(
+          /API error while summarizing ID=#{summary.id}/
+        )
+      end
+
+      it "re-raises the error" do
+        error = Exceptions::ApiError.new("Generic API error")
+        allow(GenerateSummaries).to receive(:call).and_raise(error)
+
+        expect {
+          described_class.new.perform(summary.id)
+        }.to raise_error(Exceptions::ApiError, /Generic API error/)
+      end
+
     end
 
     context "when unexpected error occurs" do

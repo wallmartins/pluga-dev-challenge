@@ -82,7 +82,7 @@ RSpec.describe ApplicationController do
       expect(controller).to receive(:render) do |args|
         expect(args[:status]).to eq(500)
         expect(args[:json][:error][:code]).to eq('internal_server_error')
-        expect(args[:json][:error][:message]).to eq('Database connection failed')
+        expect(args[:json][:error][:message]).to eq('Ocorreu um erro inesperado. Por favor, tente novamente.')
       end
 
       controller.send(:handle_internal_error, exception)
