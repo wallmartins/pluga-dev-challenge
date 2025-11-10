@@ -76,7 +76,7 @@ export function ThinkingBubble({ onComplete }: ThinkingBubbleProps) {
     typingInterval = setTimeout(typeStep, 300);
 
     return () => clearTimeout(typingInterval);
-  }, []);
+  }, [steps.length]);
 
   useEffect(() => {
     if (hasCompleted && onComplete) {

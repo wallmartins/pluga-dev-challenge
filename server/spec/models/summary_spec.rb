@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'rails_helper'
 
 RSpec.describe Summary, type: :model do
@@ -29,7 +30,7 @@ RSpec.describe Summary, type: :model do
       end
 
       it "only allows valid status values" do
-        valid_statuses = ["pending", "completed", "failed"]
+        valid_statuses = [ "pending", "completed", "failed" ]
         valid_statuses.each do |status|
           summary = build(:summary, status: status)
           expect(summary).to be_valid
@@ -40,7 +41,7 @@ RSpec.describe Summary, type: :model do
 
   describe "enums" do
     it "defines status enum with correct values" do
-      expect(Summary.statuses.keys).to match_array(["pending", "completed", "failed"])
+      expect(Summary.statuses.keys).to match_array([ "pending", "completed", "failed" ])
     end
 
     it "allows accessing status through enum methods" do

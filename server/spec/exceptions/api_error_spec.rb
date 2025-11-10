@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'rails_helper'
 
 RSpec.describe Exceptions::ApiError do
@@ -193,7 +194,7 @@ RSpec.describe Exceptions::ValidationError do
     end
 
     it "stores details when provided" do
-      details = { original_post: ["is too short"] }
+      details = { original_post: [ "is too short" ] }
       error = described_class.new(entity: "Summary", details: details)
       expect(error.details).to eq(details)
     end

@@ -17,9 +17,9 @@ class InputSanitizer
     return "" unless text
 
     sanitized = text.to_s.encode("UTF-8", invalid: :replace, undef: :replace, replace: "")
-    sanitized.gsub!(/\u0000/, "")      
-    sanitized.gsub!(/<!--.*?-->/m, "")  
-    sanitized.gsub!(/[-_*]{4,}/, "\n") 
+    sanitized.gsub!(/\u0000/, "")
+    sanitized.gsub!(/<!--.*?-->/m, "")
+    sanitized.gsub!(/[-_*]{4,}/, "\n")
     sanitized.strip!
     sanitized
   end

@@ -39,7 +39,7 @@ export function ProjectIntro() {
               2
             </span>
             <span className="text-sm sm:text-base text-zinc-700 dark:text-zinc-300">
-              Clique no botão "Resumir" para processar o seu texto
+              Clique no botão &quot;Resumir&quot; para processar o seu texto
             </span>
           </li>
           <li className="flex gap-2 sm:gap-3">

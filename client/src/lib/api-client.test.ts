@@ -1,5 +1,13 @@
 import { createSummariesApi, createApiClient } from "./api-client";
 
+interface MockResponse {
+  id: string;
+  status: string;
+  summary: string | null;
+  created_at: string;
+  original_post: string;
+}
+
 describe("api-client", () => {
   describe("createApiClient", () => {
     const originalEnv = process.env.NEXT_PUBLIC_API_BASE_URL;
@@ -27,7 +35,7 @@ describe("api-client", () => {
 
   describe("summariesApi.create", () => {
     it("posts to /summaries and returns data", async () => {
-      const mockResponse: any = {
+      const mockResponse: MockResponse = {
         id: "123",
         status: "pending",
         summary: null,
@@ -37,7 +45,7 @@ describe("api-client", () => {
       const mockApiClient = {
         post: jest.fn().mockResolvedValue({ data: mockResponse }),
       };
-      const api = createSummariesApi(mockApiClient as any);
+      const api = createSummariesApi(mockApiClient as unknown as typeof createApiClient);
 
       const result = await api.create({ summary: { original_post: "test" } });
       expect(result).toEqual(mockResponse);
@@ -49,7 +57,7 @@ describe("api-client", () => {
 
   describe("summariesApi.getById", () => {
     it("gets from /summaries/{id} and returns data", async () => {
-      const mockResponse: any = {
+      const mockResponse: MockResponse = {
         id: "123",
         status: "completed",
         summary: "Summary",
@@ -59,7 +67,7 @@ describe("api-client", () => {
       const mockApiClient = {
         get: jest.fn().mockResolvedValue({ data: mockResponse }),
       };
-      const api = createSummariesApi(mockApiClient as any);
+      const api = createSummariesApi(mockApiClient as unknown as typeof createApiClient);
 
       const result = await api.getById("123");
       expect(result).toEqual(mockResponse);
@@ -69,7 +77,7 @@ describe("api-client", () => {
 
   describe("summariesApi.list", () => {
     it("gets from /summaries and returns array", async () => {
-      const mockResponse: any = [
+      const mockResponse: MockResponse[] = [
         {
           id: "1",
           status: "completed",
@@ -81,7 +89,7 @@ describe("api-client", () => {
       const mockApiClient = {
         get: jest.fn().mockResolvedValue({ data: mockResponse }),
       };
-      const api = createSummariesApi(mockApiClient as any);
+      const api = createSummariesApi(mockApiClient as unknown as typeof createApiClient);
 
       const result = await api.list();
       expect(result).toEqual(mockResponse);
@@ -90,14 +98,14 @@ describe("api-client", () => {
   });
 
   describe("summariesApi (default export)", () => {
-    it("is created with default api client", () => {
-      const { create, getById, list } = require("./api-client").summariesApi;
-      expect(create).toBeDefined();
-      expect(getById).toBeDefined();
-      expect(list).toBeDefined();
-      expect(typeof create).toBe("function");
-      expect(typeof getById).toBe("function");
-      expect(typeof list).toBe("function");
+    it("is created with default api client", async () => {
+      const { summariesApi } = await import("./api-client");
+      expect(summariesApi.create).toBeDefined();
+      expect(summariesApi.getById).toBeDefined();
+      expect(summariesApi.list).toBeDefined();
+      expect(typeof summariesApi.create).toBe("function");
+      expect(typeof summariesApi.getById).toBe("function");
+      expect(typeof summariesApi.list).toBe("function");
     });
   });
 });
