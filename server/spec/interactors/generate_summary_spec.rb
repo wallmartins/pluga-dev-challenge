@@ -30,7 +30,7 @@ RSpec.describe GenerateSummaries do
       it "raises ValidationError" do
         expect {
           described_class.call(nil)
-        }.to raise_error(Exceptions::ValidationError) do |error|
+        }.to raise_error(ValidationError) do |error|
           expect(error.message).to include("não pode estar vazio")
           expect(error.status).to eq(422)
         end
@@ -39,7 +39,7 @@ RSpec.describe GenerateSummaries do
       it "includes validation details" do
         expect {
           described_class.call(nil)
-        }.to raise_error(Exceptions::ValidationError) do |error|
+        }.to raise_error(ValidationError) do |error|
           expect(error.details[:original_post]).to include("deve ser fornecido")
         end
       end
@@ -49,7 +49,7 @@ RSpec.describe GenerateSummaries do
       it "raises ValidationError" do
         expect {
           described_class.call("")
-        }.to raise_error(Exceptions::ValidationError) do |error|
+        }.to raise_error(ValidationError) do |error|
           expect(error.message).to include("não pode estar vazio")
         end
       end
@@ -57,7 +57,7 @@ RSpec.describe GenerateSummaries do
       it "raises for whitespace-only strings" do
         expect {
           described_class.call("   \n  ")
-        }.to raise_error(Exceptions::ValidationError)
+        }.to raise_error(ValidationError)
       end
     end
 
@@ -67,7 +67,7 @@ RSpec.describe GenerateSummaries do
 
         expect {
           described_class.call(short_text)
-        }.to raise_error(Exceptions::ValidationError) do |error|
+        }.to raise_error(ValidationError) do |error|
           expect(error.message).to include("deve ter pelo menos 30 caracteres")
         end
       end
@@ -78,7 +78,7 @@ RSpec.describe GenerateSummaries do
 
         expect {
           described_class.call(short_text)
-        }.to raise_error(Exceptions::ValidationError) do |error|
+        }.to raise_error(ValidationError) do |error|
           expect(error.details[:original_post]).to include(/mínimo de 30 caracteres/)
         end
       end
@@ -115,21 +115,21 @@ RSpec.describe GenerateSummaries do
 
     context "when SummarizeTextService raises error" do
       it "propagates ExternalServiceError" do
-        error = Exceptions::ExternalServiceError.new(service_name: "Gemini API")
+        error = ExternalServiceError.new(service_name: "Gemini API")
         allow_any_instance_of(SummarizeTextService).to receive(:call).and_raise(error)
 
         expect {
           described_class.call(valid_text)
-        }.to raise_error(Exceptions::ExternalServiceError)
+        }.to raise_error(ExternalServiceError)
       end
 
       it "propagates BadRequestError" do
-        error = Exceptions::BadRequestError.new("Invalid request")
+        error = BadRequestError.new("Invalid request")
         allow_any_instance_of(SummarizeTextService).to receive(:call).and_raise(error)
 
         expect {
           described_class.call(valid_text)
-        }.to raise_error(Exceptions::BadRequestError)
+        }.to raise_error(BadRequestError)
       end
     end
   end

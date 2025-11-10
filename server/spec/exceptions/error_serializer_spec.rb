@@ -9,7 +9,7 @@ RSpec.describe ErrorSerializer do
   describe "#as_json" do
     context "with ApiError exception" do
       it "includes error code from exception" do
-        exception = Exceptions::BadRequestError.new("Invalid request")
+        exception = BadRequestError.new("Invalid request")
         serializer = described_class.new(exception: exception, controller: controller, action: action)
 
         result = serializer.as_json
@@ -18,7 +18,7 @@ RSpec.describe ErrorSerializer do
       end
 
       it "includes exception message" do
-        exception = Exceptions::BadRequestError.new("Custom error message")
+        exception = BadRequestError.new("Custom error message")
         serializer = described_class.new(exception: exception, controller: controller, action: action)
 
         result = serializer.as_json
@@ -28,7 +28,7 @@ RSpec.describe ErrorSerializer do
 
       it "includes exception details" do
         details = { field: "email", error: "invalid" }
-        exception = Exceptions::ValidationError.new(entity: "User", details: details)
+        exception = ValidationError.new(entity: "User", details: details)
         serializer = described_class.new(exception: exception, controller: controller, action: action)
 
         result = serializer.as_json
@@ -37,7 +37,7 @@ RSpec.describe ErrorSerializer do
       end
 
       it "omits details when nil" do
-        exception = Exceptions::BadRequestError.new("Error")
+        exception = BadRequestError.new("Error")
         serializer = described_class.new(exception: exception, controller: controller, action: action)
 
         result = serializer.as_json
@@ -47,14 +47,14 @@ RSpec.describe ErrorSerializer do
       end
 
       it "includes context information" do
-        exception = Exceptions::BadRequestError.new("Error")
+        exception = BadRequestError.new("Error")
         serializer = described_class.new(exception: exception, controller: controller, action: action)
 
         result = serializer.as_json
 
         expect(result[:error][:context][:controller]).to eq("ApplicationController")
         expect(result[:error][:context][:action]).to eq("create")
-        expect(result[:error][:context][:exception_class]).to eq("Exceptions::BadRequestError")
+        expect(result[:error][:context][:exception_class]).to eq("BadRequestError")
       end
     end
 
@@ -102,7 +102,7 @@ RSpec.describe ErrorSerializer do
 
     context "meta information" do
       it "includes timestamp in ISO8601 format" do
-        exception = Exceptions::BadRequestError.new("Error")
+        exception = BadRequestError.new("Error")
         serializer = described_class.new(exception: exception, controller: controller, action: action)
 
         result = serializer.as_json
@@ -111,7 +111,7 @@ RSpec.describe ErrorSerializer do
       end
 
       it "includes request_id" do
-        exception = Exceptions::BadRequestError.new("Error")
+        exception = BadRequestError.new("Error")
         serializer = described_class.new(exception: exception, controller: controller, action: action)
 
         result = serializer.as_json
@@ -121,7 +121,7 @@ RSpec.describe ErrorSerializer do
       end
 
       it "uses Thread.current[:request_id] if set" do
-        exception = Exceptions::BadRequestError.new("Error")
+        exception = BadRequestError.new("Error")
         custom_request_id = "custom-123-request-id"
         Thread.current[:request_id] = custom_request_id
 
@@ -136,7 +136,7 @@ RSpec.describe ErrorSerializer do
 
       it "generates random UUID for request_id when not set in Thread" do
         Thread.current[:request_id] = nil
-        exception = Exceptions::BadRequestError.new("Error")
+        exception = BadRequestError.new("Error")
         serializer = described_class.new(exception: exception, controller: controller, action: action)
 
         result = serializer.as_json
@@ -147,7 +147,7 @@ RSpec.describe ErrorSerializer do
 
     context "response structure" do
       it "includes all required top-level keys" do
-        exception = Exceptions::BadRequestError.new("Error")
+        exception = BadRequestError.new("Error")
         serializer = described_class.new(exception: exception, controller: controller, action: action)
 
         result = serializer.as_json
@@ -157,7 +157,7 @@ RSpec.describe ErrorSerializer do
       end
 
       it "includes all required error keys" do
-        exception = Exceptions::BadRequestError.new("Error")
+        exception = BadRequestError.new("Error")
         serializer = described_class.new(exception: exception, controller: controller, action: action)
 
         result = serializer.as_json
@@ -168,7 +168,7 @@ RSpec.describe ErrorSerializer do
       end
 
       it "includes all required meta keys" do
-        exception = Exceptions::BadRequestError.new("Error")
+        exception = BadRequestError.new("Error")
         serializer = described_class.new(exception: exception, controller: controller, action: action)
 
         result = serializer.as_json
@@ -178,7 +178,7 @@ RSpec.describe ErrorSerializer do
       end
 
       it "includes details key even when nil" do
-        exception = Exceptions::BadRequestError.new("Error")
+        exception = BadRequestError.new("Error")
         serializer = described_class.new(exception: exception, controller: controller, action: action)
 
         result = serializer.as_json
@@ -191,10 +191,10 @@ RSpec.describe ErrorSerializer do
     context "with different exception types" do
       let(:exception_types) do
         [
-          Exceptions::NotFoundError.new(resource: "User"),
-          Exceptions::ValidationError.new(entity: "Summary"),
-          Exceptions::InternalServerError.new("Server error"),
-          Exceptions::ExternalServiceError.new(service_name: "API")
+          NotFoundError.new(resource: "User"),
+          ValidationError.new(entity: "Summary"),
+          InternalServerError.new("Server error"),
+          ExternalServiceError.new(service_name: "API")
         ]
       end
 
@@ -215,7 +215,7 @@ RSpec.describe ErrorSerializer do
     context "edge cases" do
       it "handles exception with very long message" do
         long_message = "A" * 1000
-        exception = Exceptions::BadRequestError.new(long_message)
+        exception = BadRequestError.new(long_message)
         serializer = described_class.new(exception: exception, controller: controller, action: action)
 
         result = serializer.as_json
@@ -225,7 +225,7 @@ RSpec.describe ErrorSerializer do
 
       it "handles exception with special characters in message" do
         special_message = "Error: !@#$%^&*()_+-=[]{}|;:',.<>?/\\"
-        exception = Exceptions::BadRequestError.new(special_message)
+        exception = BadRequestError.new(special_message)
         serializer = described_class.new(exception: exception, controller: controller, action: action)
 
         result = serializer.as_json
@@ -234,7 +234,7 @@ RSpec.describe ErrorSerializer do
       end
 
       it "handles empty details hash" do
-        exception = Exceptions::BadRequestError.new("Error", details: {})
+        exception = BadRequestError.new("Error", details: {})
         serializer = described_class.new(exception: exception, controller: controller, action: action)
 
         result = serializer.as_json
@@ -251,7 +251,7 @@ RSpec.describe ErrorSerializer do
             { code: "required", message: "Email is required" }
           ]
         }
-        exception = Exceptions::ValidationError.new(entity: "User", details: details)
+        exception = ValidationError.new(entity: "User", details: details)
         serializer = described_class.new(exception: exception, controller: controller, action: action)
 
         result = serializer.as_json
@@ -263,7 +263,7 @@ RSpec.describe ErrorSerializer do
 
   describe "initialization" do
     it "stores exception" do
-      exception = Exceptions::BadRequestError.new("Error")
+      exception = BadRequestError.new("Error")
       serializer = described_class.new(exception: exception, controller: controller, action: action)
 
       # Verify initialization by checking that as_json works
@@ -272,7 +272,7 @@ RSpec.describe ErrorSerializer do
     end
 
     it "stores controller" do
-      exception = Exceptions::BadRequestError.new("Error")
+      exception = BadRequestError.new("Error")
       serializer = described_class.new(exception: exception, controller: controller, action: action)
 
       result = serializer.as_json
@@ -280,7 +280,7 @@ RSpec.describe ErrorSerializer do
     end
 
     it "stores action" do
-      exception = Exceptions::BadRequestError.new("Error")
+      exception = BadRequestError.new("Error")
       serializer = described_class.new(exception: exception, controller: controller, action: "update")
 
       result = serializer.as_json

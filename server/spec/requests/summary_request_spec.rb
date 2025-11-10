@@ -137,7 +137,7 @@ RSpec.describe SummariesController do
 
         expect {
           controller.send(:create)
-        }.to raise_error(Exceptions::ValidationError) do |error|
+        }.to raise_error(ValidationError) do |error|
           expect(error.message).to match(/at least 30 characters/)
         end
       end
@@ -150,7 +150,7 @@ RSpec.describe SummariesController do
 
         expect {
           controller.send(:create)
-        }.to raise_error(Exceptions::ValidationError) do |error|
+        }.to raise_error(ValidationError) do |error|
           expect(error.details).to have_key(:original_post)
         end
       end

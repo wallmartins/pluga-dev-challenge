@@ -40,7 +40,7 @@ RSpec.describe Gemini::ResponseHandler do
 
         expect {
           described_class.new(response).handle!
-        }.to raise_error(Exceptions::ExternalServiceError)
+        }.to raise_error(ExternalServiceError)
       end
     end
 
@@ -58,7 +58,7 @@ RSpec.describe Gemini::ResponseHandler do
 
         expect {
           described_class.new(response).handle!
-        }.to raise_error(Exceptions::BadRequestError)
+        }.to raise_error(BadRequestError)
       end
     end
 
@@ -76,7 +76,7 @@ RSpec.describe Gemini::ResponseHandler do
 
         expect {
           described_class.new(response).handle!
-        }.to raise_error(Exceptions::ExternalServiceError)
+        }.to raise_error(ExternalServiceError)
       end
     end
 
@@ -94,7 +94,7 @@ RSpec.describe Gemini::ResponseHandler do
 
         expect {
           described_class.new(response).handle!
-        }.to raise_error(Exceptions::ExternalServiceError)
+        }.to raise_error(ExternalServiceError)
       end
     end
 
@@ -116,7 +116,7 @@ RSpec.describe Gemini::ResponseHandler do
 
         expect {
           described_class.new(response).handle!
-        }.to raise_error(Exceptions::ExternalServiceError, /Resposta inesperada ou potencialmente insegura/)
+        }.to raise_error(ExternalServiceError, /Resposta inesperada ou potencialmente insegura/)
       end
 
       it "raises ExternalServiceError when response contains 'instruction' keyword" do
@@ -136,7 +136,7 @@ RSpec.describe Gemini::ResponseHandler do
 
         expect {
           described_class.new(response).handle!
-        }.to raise_error(Exceptions::ExternalServiceError, /Resposta inesperada ou potencialmente insegura/)
+        }.to raise_error(ExternalServiceError, /Resposta inesperada ou potencialmente insegura/)
       end
     end
 
@@ -158,7 +158,7 @@ RSpec.describe Gemini::ResponseHandler do
 
         expect {
           described_class.new(response).handle!
-        }.to raise_error(Exceptions::ExternalServiceError, /Resposta inesperada ou potencialmente insegura/)
+        }.to raise_error(ExternalServiceError, /Resposta inesperada ou potencialmente insegura/)
       end
     end
 
@@ -174,7 +174,7 @@ RSpec.describe Gemini::ResponseHandler do
 
         expect {
           described_class.new(response).handle!
-        }.to raise_error(Exceptions::ExternalServiceError, /Resposta inesperada/)
+        }.to raise_error(ExternalServiceError, /Resposta inesperada/)
       end
     end
   end

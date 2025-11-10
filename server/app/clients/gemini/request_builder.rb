@@ -30,8 +30,8 @@ module Gemini
     private
 
     def validate_input!
-      raise Exceptions::BadRequestError, "Texto vazio" if @text.blank?
-      raise Exceptions::BadRequestError, "Entrada suspeita detectada" unless InputSanitizer.safe?(@text)
+      raise BadRequestError, "Texto vazio" if @text.blank?
+      raise BadRequestError, "Entrada suspeita detectada" unless InputSanitizer.safe?(@text)
     end
 
     def system_prompt

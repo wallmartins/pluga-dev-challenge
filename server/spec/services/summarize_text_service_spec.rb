@@ -35,32 +35,32 @@ RSpec.describe SummarizeTextService do
 
     context "when GeminiClient raises ApiError" do
       it "propagates BadRequestError" do
-        error = Exceptions::BadRequestError.new("Invalid request")
+        error = BadRequestError.new("Invalid request")
         allow(Gemini::Client).to receive(:summarize).and_raise(error)
 
         service = described_class.new(text)
 
         expect {
           service.call
-        }.to raise_error(Exceptions::BadRequestError)
+        }.to raise_error(BadRequestError)
       end
 
       it "propagates ExternalServiceError" do
-        error = Exceptions::ExternalServiceError.new(service_name: "Gemini API")
+        error = ExternalServiceError.new(service_name: "Gemini API")
         allow(Gemini::Client).to receive(:summarize).and_raise(error)
 
         expect {
           described_class.new(text).call
-        }.to raise_error(Exceptions::ExternalServiceError)
+        }.to raise_error(ExternalServiceError)
       end
 
       it "propagates ValidationError" do
-        error = Exceptions::ValidationError.new(entity: "Summary")
+        error = ValidationError.new(entity: "Summary")
         allow(Gemini::Client).to receive(:summarize).and_raise(error)
 
         expect {
           described_class.new(text).call
-        }.to raise_error(Exceptions::ValidationError)
+        }.to raise_error(ValidationError)
       end
     end
 
@@ -72,7 +72,7 @@ RSpec.describe SummarizeTextService do
 
         expect {
           service.call
-        }.to raise_error(Exceptions::ExternalServiceError) do |error|
+        }.to raise_error(ExternalServiceError) do |error|
           expect(error.message).to include("Erro inesperado")
           expect(error.details).to include("Network error")
         end
@@ -84,7 +84,7 @@ RSpec.describe SummarizeTextService do
 
         expect {
           described_class.new(text).call
-        }.to raise_error(Exceptions::ExternalServiceError) do |error|
+        }.to raise_error(ExternalServiceError) do |error|
           expect(error.details).to eq(original_message)
         end
       end
@@ -94,7 +94,7 @@ RSpec.describe SummarizeTextService do
 
         expect {
           described_class.new(text).call
-        }.to raise_error(Exceptions::ExternalServiceError)
+        }.to raise_error(ExternalServiceError)
       end
     end
 

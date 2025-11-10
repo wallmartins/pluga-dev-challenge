@@ -5,7 +5,7 @@ class GenerateSummaries
 
   def self.call(text)
     if text.nil? || text.strip.empty?
-      raise Exceptions::ValidationError.new(
+      raise ValidationError.new(
         entity: "Resumo",
         message: "O texto não pode estar vazio.",
         details: { original_post: [ "deve ser fornecido" ] }
@@ -13,7 +13,7 @@ class GenerateSummaries
     end
 
     if text.length < MIN_TEXT_LENGTH
-      raise Exceptions::ValidationError.new(
+      raise ValidationError.new(
         entity: "Resumo",
         message: "O texto deve ter pelo menos #{MIN_TEXT_LENGTH} caracteres.",
         details: { original_post: [ "é muito curto (mínimo de #{MIN_TEXT_LENGTH} caracteres)" ] }

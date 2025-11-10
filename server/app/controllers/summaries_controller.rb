@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# app/controllers/summaries_controller.rb
 class SummariesController < ApplicationController
   def index
     summaries = Summary.order(created_at: :desc)
@@ -20,7 +19,7 @@ class SummariesController < ApplicationController
       SummarizeSummaryJob.perform_later(summary.id)
       render json: SummarySerializer.new(summary).as_json, status: :created
     else
-      raise Exceptions::ValidationError.new(
+      raise ValidationError.new(
         entity: "Summary",
         message: "The original post must have at least 30 characters to generate a summary.",
         details: summary.errors.messages

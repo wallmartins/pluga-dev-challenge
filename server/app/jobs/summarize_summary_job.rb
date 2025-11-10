@@ -12,26 +12,26 @@ class SummarizeSummaryJob < ApplicationJob
       status: "completed"
     )
 
-  rescue Exceptions::ValidationError => e
+  rescue ValidationError => e
     update_summary_on_error(summary, "failed", e.message)
     Rails.logger.error("Validation error while summarizing ID=#{summary_id}: #{e.message}")
     raise e
-  rescue Exceptions::BadRequestError => e
+  rescue BadRequestError => e
     update_summary_on_error(summary, "failed", "O texto contém padrões suspeitos ou é inválido. Por favor, revise e tente novamente.")
     Rails.logger.error("Bad request while summarizing ID=#{summary_id}: #{e.message}")
     raise e
-  rescue Exceptions::ExternalServiceError => e
+  rescue ExternalServiceError => e
     update_summary_on_error(summary, "failed", "O serviço de resumo está temporariamente indisponível. Por favor, tente novamente em alguns instantes.")
     Rails.logger.error("External service error while summarizing ID=#{summary_id}: #{e.message}")
     raise e
-  rescue Exceptions::ApiError => e
+  rescue ApiError => e
     update_summary_on_error(summary, "failed", e.message)
     Rails.logger.error("API error while summarizing ID=#{summary_id}: #{e.message}")
     raise e
   rescue => e
     update_summary_on_error(summary, "failed", "Ocorreu um erro inesperado ao processar o resumo. Por favor, tente novamente.")
     Rails.logger.error("Unexpected error in SummarizeSummaryJob ID=#{summary_id}: #{e.message}")
-    raise Exceptions::InternalServerError.new(
+    raise InternalServerError.new(
       "Falha ao processar resumo #{summary_id}",
       details: e.message
     )

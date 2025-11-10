@@ -31,7 +31,7 @@ RSpec.describe Gemini::Client, type: :request do
 
         expect {
           described_class.summarize(text)
-        }.to raise_error(Exceptions::ExternalServiceError)
+        }.to raise_error(ExternalServiceError)
       end
     end
 
@@ -40,11 +40,11 @@ RSpec.describe Gemini::Client, type: :request do
         allow(InputSanitizer).to receive(:clean).and_return(text)
         allow(Gemini::RequestBuilder).to receive(:new).and_return(double(build!: {}))
         allow(Gemini::HttpClient).to receive(:new).and_return(double(post: "dummy_response"))
-        allow(Gemini::ResponseHandler).to receive(:new).and_raise(Exceptions::ApiError.new("Gemini API down"))
+        allow(Gemini::ResponseHandler).to receive(:new).and_raise(ApiError.new("Gemini API down"))
 
         expect {
           described_class.summarize(text)
-        }.to raise_error(Exceptions::ApiError)
+        }.to raise_error(ApiError)
       end
     end
 
@@ -72,7 +72,7 @@ RSpec.describe Gemini::Client, type: :request do
 
         expect {
           described_class.summarize(text)
-        }.to raise_error(Exceptions::ExternalServiceError)
+        }.to raise_error(ExternalServiceError)
       end
     end
   end
