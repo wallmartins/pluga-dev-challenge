@@ -785,5 +785,3 @@ A arquitetura customizada pode parecer over-engineered para uma aplicação CRUD
 ---
 
 **Desenvolvido com** ❤️ **para o Pluga Challenge**
-
-Repositório: https://github.com/wallmartins/pluga-dev-challenge
