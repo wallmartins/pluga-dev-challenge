@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 
 require_relative "boot"
 
@@ -19,6 +18,7 @@ module Backend
     config.autoload_lib(ignore: %w[assets tasks])
 
     # Enable autoloading for app/exceptions directory
+    config.autoload_paths << Rails.root.join("app/exceptions")
     config.eager_load_paths << Rails.root.join("app/exceptions")
     config.autoload_paths << Rails.root.join("app/lib")
 
