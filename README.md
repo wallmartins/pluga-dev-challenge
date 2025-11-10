@@ -8,15 +8,15 @@ Aplicação full-stack para gerar resumos de texto utilizando inteligência arti
 ## Índice
 
 - [Visão Geral](#visão-geral)
-- [Arquitetura](#arquitetura)
-  - [Arquitetura do Servidor](#arquitetura-do-servidor)
-  - [Arquitetura do Cliente](#arquitetura-do-cliente)
-- [Stack Tecnológica](#stack-tecnológica)
 - [Configuração](#configuração)
   - [Pré-requisitos](#pré-requisitos)
   - [Configuração de Ambiente](#configuração-de-ambiente)
   - [Executando com Docker](#executando-com-docker)
   - [Executando Localmente](#executando-localmente)
+- [Arquitetura](#arquitetura)
+  - [Arquitetura do Servidor](#arquitetura-do-servidor)
+  - [Arquitetura do Cliente](#arquitetura-do-cliente)
+- [Stack Tecnológica](#stack-tecnológica)
 - [Documentação da API](#documentação-da-api)
 - [Testes](#testes)
 - [Pipeline CI/CD](#pipeline-cicd)
@@ -32,6 +32,99 @@ Esta aplicação permite que equipes de conteúdo colem textos brutos (rascunhos
 - API Backend: `http://localhost:3000`
 - Frontend: `http://localhost:4000`
 - Documentação da API: `http://localhost:3000/api-docs`
+
+## Configuração
+
+### Pré-requisitos
+
+- Docker e Docker Compose
+- (Opcional para desenvolvimento local) Ruby 3.4+, Node.js 20+, PostgreSQL 15+
+
+### Configuração de Ambiente
+
+#### 1. Obter Chave da API Gemini
+
+Visite [Google AI Studio](https://aistudio.google.com/apikey) para obter sua chave de API gratuita.
+
+#### 2. Configurar Ambiente do Servidor
+
+Copie o arquivo de exemplo e configure suas variáveis:
+
+```bash
+cd server
+cp .env.example .env
+```
+
+Edite o arquivo `server/.env` e adicione sua chave do Gemini:
+
+```bash
+GEMINI_KEY=sua_chave_gemini_aqui
+```
+
+O arquivo [server/.env.example](server/.env.example) contém todas as variáveis necessárias com valores padrão para desenvolvimento.
+
+#### 3. Configurar Ambiente do Cliente
+
+Copie o arquivo de exemplo:
+
+```bash
+cd client
+cp .env.example .env.local
+```
+
+O arquivo [client/.env.example](client/.env.example) já está configurado com os valores padrão. Você só precisa ajustar se estiver usando portas diferentes.
+
+### Executando com Docker
+
+**Iniciar todos os serviços:**
+
+```bash
+docker compose up
+```
+
+**Configurar banco de dados (primeira execução):**
+
+```bash
+docker compose exec server rails db:create db:migrate
+```
+
+**Acessar:**
+
+- Frontend: http://localhost:4000
+- API Backend: http://localhost:3000
+- Documentação da API: http://localhost:3000/api-docs
+
+**Parar serviços:**
+
+```bash
+docker compose down
+```
+
+**Reiniciar do zero (remover volumes):**
+
+```bash
+docker compose down -v
+docker compose up --build
+```
+
+### Executando Localmente
+
+#### Configuração do Servidor
+
+```bash
+cd server
+bundle install
+rails db:create db:migrate
+rails server -p 3000
+```
+
+#### Configuração do Cliente
+
+```bash
+cd client
+npm install
+npm run dev
+```
 
 ## Arquitetura
 
@@ -290,99 +383,6 @@ O frontend segue **padrões modernos do React** com features do React 19, enfati
 - **Docker** + **Docker Compose**
 - **PostgreSQL 15** (containerizado)
 - **Puma** (servidor web)
-
-## Configuração
-
-### Pré-requisitos
-
-- Docker e Docker Compose
-- (Opcional para desenvolvimento local) Ruby 3.4+, Node.js 20+, PostgreSQL 15+
-
-### Configuração de Ambiente
-
-#### 1. Obter Chave da API Gemini
-
-Visite [Google AI Studio](https://aistudio.google.com/apikey) para obter sua chave de API gratuita.
-
-#### 2. Configurar Ambiente do Servidor
-
-Copie o arquivo de exemplo e configure suas variáveis:
-
-```bash
-cd server
-cp .env.example .env
-```
-
-Edite o arquivo `server/.env` e adicione sua chave do Gemini:
-
-```bash
-GEMINI_KEY=sua_chave_gemini_aqui
-```
-
-O arquivo [server/.env.example](server/.env.example) contém todas as variáveis necessárias com valores padrão para desenvolvimento.
-
-#### 3. Configurar Ambiente do Cliente
-
-Copie o arquivo de exemplo:
-
-```bash
-cd client
-cp .env.example .env.local
-```
-
-O arquivo [client/.env.example](client/.env.example) já está configurado com os valores padrão. Você só precisa ajustar se estiver usando portas diferentes.
-
-### Executando com Docker
-
-**Iniciar todos os serviços:**
-
-```bash
-docker compose up
-```
-
-**Configurar banco de dados (primeira execução):**
-
-```bash
-docker compose exec server rails db:create db:migrate
-```
-
-**Acessar:**
-
-- Frontend: http://localhost:4000
-- API Backend: http://localhost:3000
-- Documentação da API: http://localhost:3000/api-docs
-
-**Parar serviços:**
-
-```bash
-docker compose down
-```
-
-**Reiniciar do zero (remover volumes):**
-
-```bash
-docker compose down -v
-docker compose up --build
-```
-
-### Executando Localmente
-
-#### Configuração do Servidor
-
-```bash
-cd server
-bundle install
-rails db:create db:migrate
-rails server -p 3000
-```
-
-#### Configuração do Cliente
-
-```bash
-cd client
-npm install
-npm run dev
-```
 
 ## Documentação da API
 
@@ -768,6 +768,12 @@ Adicionar caching Redis para resumos frequentemente acessados e respostas do Gem
 **Escolhido**: 5 minutos de stale time
 **Por quê**: Equilíbrio entre frescor dos dados e chamadas à API
 **Trade-off**: Pode mostrar dados desatualizados por até 5 minutos
+
+### Features que eu adicionaria
+
+- Uma busca nos resumos já realizados para ver se o texto enviado pelo usuário já existe no banco, evitando chamada para a API e retornando um aviso e o resumo já gerado pelo usuário.
+- Um campo de busca para os resumos, visto que caso o usuário queira encontrar um resumo em específico.
+- Criação de um serviço com a IA para buscar artigos ou textos que tivessem relação com o resumo que o usuário acabou de criar para indicar novas leituras que podem vir a ser do interesse do usuário.
 
 ### Principais Aprendizados
 
