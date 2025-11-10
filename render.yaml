@@ -1,5 +1,4 @@
 services:
-  # PostgreSQL Database
   - type: pserv
     name: pluga-db
     plan: free
@@ -7,7 +6,6 @@ services:
     databaseName: pluga_prod
     user: postgres
 
-  # Rails Backend API (usando Docker)
   - type: web
     name: pluga-backend
     plan: free
@@ -36,7 +34,6 @@ services:
     healthCheckStartDelay: 30
     connectToDatabase: true
 
-  # Next.js Frontend (usando Docker)
   - type: web
     name: pluga-frontend
     plan: free
