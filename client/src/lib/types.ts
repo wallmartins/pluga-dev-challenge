@@ -1,4 +1,4 @@
-export type Snippet = {
+export type Summary = {
   id: string;
   text: string;
   summary: string;
@@ -8,12 +8,12 @@ export type Snippet = {
   updatedAt?: string;
 };
 
-export type CreateSnippetPayload = {
+export type CreateSummaryPayload = {
   summary: {
     original_post: string;
   };
 };
 
-export type SnippetResponse = Snippet;
+export type SummaryResponse = Summary;
 
-export type SnippetsListResponse = Snippet[];
+export type SummarysListResponse = Summary[];

@@ -55,7 +55,6 @@ RSpec.describe SummarizeSummaryJob do
           /Validation error while summarizing ID=#{summary.id}/
         )
       end
-
     end
 
     context "when GenerateSummaries raises BadRequestError" do
@@ -94,7 +93,6 @@ RSpec.describe SummarizeSummaryJob do
           described_class.new.perform(summary.id)
         }.to raise_error(Exceptions::BadRequestError, /Invalid request/)
       end
-
     end
 
     context "when GenerateSummaries raises ExternalServiceError" do
@@ -133,7 +131,6 @@ RSpec.describe SummarizeSummaryJob do
           described_class.new.perform(summary.id)
         }.to raise_error(Exceptions::ExternalServiceError)
       end
-
     end
 
     context "when GenerateSummaries raises generic ApiError" do
@@ -172,7 +169,6 @@ RSpec.describe SummarizeSummaryJob do
           described_class.new.perform(summary.id)
         }.to raise_error(Exceptions::ApiError, /Generic API error/)
       end
-
     end
 
     context "when unexpected error occurs" do

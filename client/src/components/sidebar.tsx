@@ -1,23 +1,23 @@
 "use client";
 
 import { X } from "lucide-react";
-import type { Snippet } from "@/lib/types";
+import type { Summary } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 
 type SidebarProps = {
-  snippets: Snippet[];
+  Summarys: Summary[];
   selectedId: string | null;
-  onSelectSnippet: (id: string) => void;
+  onSelectSummary: (id: string) => void;
   isLoading?: boolean;
   isOpen: boolean;
   onClose: () => void;
 };
 
 export function Sidebar({
-  snippets,
+  Summarys,
   selectedId,
-  onSelectSnippet,
+  onSelectSummary,
   isLoading = false,
   isOpen,
   onClose,
@@ -25,8 +25,8 @@ export function Sidebar({
   const [isHovered, setIsHovered] = useState(false);
   const isOpenOrHovered = isOpen || isHovered;
 
-  const handleSelectSnippet = (id: string) => {
-    onSelectSnippet(id);
+  const handleSelectSummary = (id: string) => {
+    onSelectSummary(id);
     onClose();
   };
 
@@ -86,26 +86,26 @@ export function Sidebar({
                 />
               ))}
             </div>
-          ) : snippets.length === 0 ? (
+          ) : Summarys.length === 0 ? (
             <div className="p-4 text-center text-sm text-zinc-500 dark:text-zinc-400">
               {isOpenOrHovered ? "Nenhum resumo criado" : ""}
             </div>
           ) : (
             <ul className="space-y-1 p-2">
-              {snippets.map((snippet) => (
-                <li key={snippet.id}>
+              {Summarys.map((Summary) => (
+                <li key={Summary.id}>
                   <button
-                    onClick={() => handleSelectSnippet(snippet.id)}
+                    onClick={() => handleSelectSummary(Summary.id)}
                     className={cn(
                       "w-full truncate rounded-md px-3 py-2 text-left text-sm transition-colors",
-                      selectedId === snippet.id
+                      selectedId === Summary.id
                         ? "bg-zinc-200 font-medium text-zinc-900 dark:bg-zinc-800 dark:text-white"
                         : "text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-900"
                     )}
-                    title={snippet.summary}
+                    title={Summary.summary}
                   >
                     {isOpenOrHovered ? (
-                      (snippet.summary ?? "Sem resumo").substring(0, 40) + "..."
+                      (Summary.summary ?? "Sem resumo").substring(0, 40) + "..."
                     ) : (
                       <span className="invisible">•</span>
                     )}
